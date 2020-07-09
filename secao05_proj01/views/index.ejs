@@ -1,12 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GuiaPerguntas</title>
-</head>
-<body>
+<%- include('partials/header.ejs') %>
+<%- include('partials/nav.ejs') %>
 
-  
-</body>
-</html>
+<div class="container">
+  <h1 class="mt-3">Perguntas</h1>
+  <hr>
+
+  <a href="/perguntar" class="btn btn-primary">Perguntar</a>
+
+  <% perguntas.forEach(pergunta => { %>
+    <div class="card mt-4">
+      <div class="card-header">
+        <h3><%= pergunta.titulo %></h3>
+      </div>
+
+      <div class="card-body">
+        <p><%= pergunta.pergunta %></p>
+      </div>
+
+      <div class="card-footer">
+        <a href="/pergunta/<%= pergunta.id %>" class="btn btn-primary">Responder</a>
+      </div>
+    </div>
+    <p></p>
+    
+  <% }); %>
+</div>
+
+<%- include('partials/footer.ejs') %>
