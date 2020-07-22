@@ -1,0 +1,44 @@
+<%- include('../../partials/header.ejs') %>
+<%- include('../../partials/navbar.ejs') %>
+
+<div class="container mt-5">
+  
+  <h2>Artigos</h2>
+
+  <a href="/admin/articles/new" class="btn btn-success">Escrever novo artigo</a>
+
+  <table class="table table-hover mt-4">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Título</th>
+        <th>Slug</th>
+        <th>Categoria</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% articles.forEach(article => { %>
+        <tr>
+          <td><%= article.id %></td>
+          <td><%= article.title %></td>
+          <td><%= article.slug %></td>
+          <td><%= article.category.title %></td>
+          <td>
+            <a href="/admin/articles/edit/<%= article.id %>" class="btn btn-primary">Editar</a>
+
+            <form action="/admin/articles/delete" method="post" style="display: inline;" onsubmit="confirmExclusion(event, this);">
+              <input type="hidden" name="articleId" value="<%= article.id %>">
+              <button class="btn btn-danger">Excluir</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+  <script src="/js/articles.js"></script>
+  
+</div>
+<%- include('../../partials/footer.ejs') %>
