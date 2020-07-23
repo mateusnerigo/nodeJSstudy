@@ -4,7 +4,9 @@ const router = express.Router();
 const Category = require('./Category');
 const slugify = require('slugify');
 
-router.get('/admin/categories', (req,res) => {
+const adminAuth = require('../../middlewares/authentication');
+
+router.get('/admin/categories', adminAuth, (req,res) => {
   Category
     .findAll()
     .then(categories => {
@@ -15,11 +17,11 @@ router.get('/admin/categories', (req,res) => {
     })
 });
 
-router.get('/admin/categories/new', (req, res) => {
+router.get('/admin/categories/new', adminAuth, (req, res) => {
  res.render('admin/categories/newCategory');
 });
 
-router.get('/admin/categories/edit/:id', (req, res) => {
+router.get('/admin/categories/edit/:id', adminAuth, (req, res) => {
   const id = req.params.id;
 
   Category
@@ -41,7 +43,7 @@ router.get('/admin/categories/edit/:id', (req, res) => {
     ;
 });
 
-router.post('/admin/categories/save', (req, res) => {
+router.post('/admin/categories/save', adminAuth, (req, res) => {
   const categoryTitle = req.body.categoryTitle;
   console.log(categoryTitle);
   if (categoryTitle != undefined || categoryTitle != "") {
@@ -61,7 +63,7 @@ router.post('/admin/categories/save', (req, res) => {
 
 });
 
-router.post('/admin/categories/delete', (req, res) => {
+router.post('/admin/categories/delete', adminAuth, (req, res) => {
   const categoryId = req.body.categoryId;
 
   if (categoryId != undefined || !isNaN(categoryId)) {
@@ -82,7 +84,7 @@ router.post('/admin/categories/delete', (req, res) => {
   
 });
 
-router.post('/admin/categories/update', (req, res) => {
+router.post('/admin/categories/update', adminAuth, (req, res) => {
   const categoryId = req.body.categoryId;
   const categoryTitle = req.body.categoryTitle;
   

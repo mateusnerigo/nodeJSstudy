@@ -1,11 +1,13 @@
 const express = require('express');
-const router = express.Router();
 const slugify = require('slugify');
 
 const Category = require('../categories/Category');
 const Article = require('./Article');
+const adminAuth = require('../../middlewares/authentication');
 
-router.get('/admin/articles', (req, res) => {
+const router = express.Router();
+
+router.get('/admin/articles', adminAuth, (req, res) => {
   Article
     .findAll({
       include: [{ model: Category }]
@@ -18,7 +20,7 @@ router.get('/admin/articles', (req, res) => {
     })
 });
 
-router.get('/admin/articles/new', (req, res) => {
+router.get('/admin/articles/new', adminAuth, (req, res) => {
   Category
     .findAll()
     .then(categories => {
@@ -26,7 +28,7 @@ router.get('/admin/articles/new', (req, res) => {
     })
 });
 
-router.get('/admin/articles/edit/:id', (req, res) => {
+router.get('/admin/articles/edit/:id', adminAuth, (req, res) => {
   const id = req.params.id;
 
   Article
@@ -52,7 +54,7 @@ router.get('/admin/articles/edit/:id', (req, res) => {
     })
 })
 
-router.post('/admin/articles/save', (req,res) => {
+router.post('/admin/articles/save', adminAuth, (req,res) => {
   const articleTitle = req.body.articleTitle || 'Artigo sem título';
   const articleCategory = req.body.articleCategory;
   const articleBody = req.body.articleBody || 'Artigo sem texto';
@@ -73,7 +75,7 @@ router.post('/admin/articles/save', (req,res) => {
 });
 
 
-router.post('/admin/articles/delete', (req, res) => {
+router.post('/admin/articles/delete', adminAuth, (req, res) => {
   const articleId = req.body.articleId;
 
   if (articleId != undefined || !isNaN(articleId)) {
@@ -93,7 +95,7 @@ router.post('/admin/articles/delete', (req, res) => {
   }
 });
 
-router.post('/admin/articles/update', (req, res) => {
+router.post('/admin/articles/update', adminAuth, (req, res) => {
   const articleId = req.body.articleId;
   const articleTitle = req.body.articleTitle;
   const articleCategory = req.body.articleCategory;

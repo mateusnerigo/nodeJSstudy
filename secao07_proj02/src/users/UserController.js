@@ -1,9 +1,13 @@
 const express = require('express');
-const router = express.Router();
-const User = require('./User');
 const bcrypt = require('bcryptjs');
 
-router.get('/admin/users', (req, res) => {
+const User = require('./User');
+
+const adminAuth = require('../../middlewares/authentication');
+
+const router = express.Router();
+
+router.get('/admin/users', adminAuth, (req, res) => {
   User
     .findAll()
     .then(users => {
@@ -15,11 +19,11 @@ router.get('/admin/users', (req, res) => {
     })
 })
 
-router.get('/admin/users/new', (req, res) => {
+router.get('/admin/users/new', adminAuth, (req, res) => {
   res.render('admin/users/newUser');
 })
 
-router.post('/admin/users/save', (req, res) => {
+router.post('/admin/users/save', adminAuth, (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
@@ -49,6 +53,45 @@ router.post('/admin/users/save', (req, res) => {
       }
     })
 
+})
+
+router.get('/login', (req, res) => {
+  res.render('admin/users/login');
+});
+
+router.post('/authenticate', (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+
+  User
+    .findOne({
+      where: { email }
+    })
+    .then(user => {
+      if(user != undefined) {
+        const correct = bcrypt.compareSync(password, user.password);
+
+        if (correct) {
+          req.session.user = {
+            id: user.id,
+            email: user.email
+          }
+          res.redirect('/admin/articles');
+        } 
+        else {
+          console.log('Senha incorreta!');
+          res.redirect('/login');
+        }
+      }
+      else {
+        console.log('Nenhum usuário com este email');
+        res.redirect('/login');
+      }
+    })
+    .catch(err => {
+      console.log(`Erro ao localizar usuário: ${err}`);
+      res.redirect('/login');
+    })
 })
 
 module.exports = router;
