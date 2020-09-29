@@ -1,8 +1,12 @@
 const express = require ('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
+const jwt = require("jsonwebtoken");
 
 const app = express();
+const jwtSecret = "yuyg19goev197v189gr71vr8b1";
 
+app.use(cors());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
@@ -16,25 +20,45 @@ const database = {
     { id: 6, title: "Forza Horizon 4", year: 2018, price: 150 },
   ],
   users: [
-    {
-      id: 1,
-      name: 'Mateus Neri',
-      email: 'mateus@a.com',
-      senha: 'mateus123'
-    },
-    {
-      id: 2,
-      name: 'Laíssi Vedovato',
-      email: 'laissi@a.com',
-      senha: 'laissi123'
-    }
+    { id: 1, name: "Mateus Neri", email: "mateus@a.com", password: "mateus123" },
+    { id: 2, name: "Laíssi Vedovato", email: "laissi@a.com", password: "laissi123" },
   ]
 }
 
-// Games
-app.get('/games', (req, res) => {
+function auth(req, res, next) {
+  const authToken = req.headers['authorization'];
+  
+  if (authToken != undefined) {
+    const bearer = authToken.split(' ');
+    const token = bearer[1];
+
+    jwt.verify(token, jwtSecret, (err, tokenData) => {
+      if (err) {
+        res.status(401),
+        res.json({ err: "Token Inválido"});
+      } else {
+        res.token = token;
+        req.loggedUser = { 
+          id: tokenData.id, 
+          email: tokenData.email
+        }
+        
+        next();
+      }
+    });
+    
+  } else {
+    res.status(401);
+    res.json({ err: "Token Inválido." });
+  }
+}
+
+app.get('/games', auth, (req, res) => {
   res.statusCode = 200;
-  res.json(database.games);
+  res.json({ 
+    user: req.loggedUser, 
+    games: database.games 
+  });
 })
 
 app.get('/game/:id', (req, res) => {
@@ -115,9 +139,40 @@ app.delete('/game/:id', (req, res) => {
   }
 })
 
-// Login
-app.post('', (req, res) => {
-  
+app.post('/auth', (req, res) => {
+  const { email, password } = req.body;
+
+  if (email != undefined) {
+    const user = database.users.find(u => u.email == email);
+
+    if (user != undefined) {
+      if (user.password == password) {
+        jwt.sign(
+          { id: user.id, email: user.email }, 
+          jwtSecret, 
+          { expiresIn: '1h' },
+          (err, token) => {
+            if (err) {
+              res.status(400);
+              res.json({ err: "Falha interna" });
+            } else {
+              res.status(200);
+              res.json({ token: token });
+            }
+          }
+        );
+      } else {
+        res.status(401);
+        res.json({ err: "Informações não batem." });
+      }
+    } else {
+      res.status(400);
+      res.json({ err: "Email não existe na base de dados." });
+    }
+  } else {
+    res.status(400);
+    res.json({ err: "Email inválido." })
+  }
 })
 
 app.listen(3333, () => {

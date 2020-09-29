@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Games Store</title>
+</head>
+<body>
+
+  <h2>Lista de Games</h2>
+
+  <fieldset>
+    <legend>Login</legend>
+
+    <label for="email">Email</label>
+    <input type="email" name="email" id="email" placeholder="Email">
+    
+    <label for="password">Password</label>
+    <input type="password" name="password" id="password" placeholder="Password">
+
+    <button id="loginBtn">Log In</button>
+    <button id="logoutBtn">Log Out</button>
+  </fieldset>
+
+  <ul id="games"></ul>
+
+  <fieldset>
+    <legend>Criar</legend>
+
+    <label for="title">Título</label>
+    <input type="text" name="title" id="title" placeholder="Título">
+    
+    <label for="year">Ano</label>
+    <input type="number" name="year" id="year" placeholder="Ano">
+    
+    <label for="price">Preço</label>
+    <input type="number" name="price" id="price" placeholder="Preço">
+
+    <button id="createBtn">Criar</button>
+  </fieldset>
+
+  <hr>
+
+  <fieldset>
+    <legend>Editar</legend>
+
+    <input type="hidden" name="idEdit" id="idEdit">
+
+    <label for="titleEdit">Título</label>
+    <input type="text" name="titleEdit" id="titleEdit" placeholder="Título">
+    
+    <label for="yearEdit">Ano</label>
+    <input type="number" name="yearEdit" id="yearEdit" placeholder="Ano">
+    
+    <label for="priceEdit">Preço</label>
+    <input type="number" name="priceEdit" id="priceEdit" placeholder="Preço">
+
+    <button id="updateBtn">Atualizar</button>
+  </fieldset>
+  
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="./index.js"></script>
+</body>
+</html>
